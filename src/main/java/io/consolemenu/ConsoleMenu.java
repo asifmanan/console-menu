@@ -1,3 +1,5 @@
+package io.consolemenu;
+
 import java.util.ArrayList;
 import java.util.List;
 
