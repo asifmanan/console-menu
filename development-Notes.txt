@@ -1,0 +1,3 @@
+I have been thinking about various approached to creating the ConsoleMenu, I am trying to establish is the relationship between ConsoleMenu and Menu is
+"is-a" or "Has-a"
+I have decided to go for a has a relationship, it will allow to later change/replace the menu Class without any significant changes

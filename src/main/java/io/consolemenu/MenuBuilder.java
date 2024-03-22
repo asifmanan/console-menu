@@ -9,17 +9,17 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.IOException;
 import java.util.Set;
 
-public class MenuManager {
+public class MenuBuilder {
     private Set<String> completionItems;
     private ConsoleMenu mainMenu = new ConsoleMenu();
-    public MenuManager(){
+    public MenuBuilder(){
         this.createMenu();
     }
     public void createMenu(){
-        mainMenu.addItem("Learners");
-        mainMenu.addItem("Coaches");
-        mainMenu.addItem("Bookings");
-        mainMenu.addItem("Reports");
+//        mainMenu.addItem("Learners");
+//        mainMenu.addItem("Coaches");
+//        mainMenu.addItem("Bookings");
+//        mainMenu.addItem("Reports");
     }
     public void initialize(){
         Terminal terminal = null;
@@ -34,7 +34,7 @@ public class MenuManager {
                     .build();
 
             String line;
-            terminal.writer().println(mainMenu.displayMenu());
+//            terminal.writer().println(mainMenu.displayMenu());
             terminal.flush();
 
             while (true) {

@@ -1,24 +1,17 @@
 package io.consolemenu;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ConsoleMenu {
+    private final Menu menu;
 
-    private List<String> menuItems = new ArrayList<>();
-    public void addItem(String item){
-        menuItems.add(item);
+
+    public ConsoleMenu(){
+        menu = new Menu();
     }
-    public String displayMenu(){
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i< menuItems.size(); i++){
-            if(i != 0) {
-                sb.append("    |    ");
-            }
-            sb.append(menuItems.get(i));
+    public ConsoleMenu(Menu menu){
+        this.menu = menu;
+    }
+    public void initialize(){
 
-        }
-        return sb.toString();
     }
 }
 
