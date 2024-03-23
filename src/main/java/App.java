@@ -1,3 +1,4 @@
+import io.consolemenu.ConsoleMenu;
 import io.consolemenu.Menu;
 
 public class App {
@@ -14,6 +15,8 @@ public class App {
         mainList.addSubMenu(learnerList);
 
 //        System.out.println(mainList.getList());
-        mainList.display();
+//        mainList.display();
+        ConsoleMenu consoleMenu = new ConsoleMenu(learnerList);
+        consoleMenu.initialize();
     }
 }

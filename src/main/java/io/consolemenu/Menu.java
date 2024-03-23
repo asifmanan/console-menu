@@ -21,7 +21,10 @@ public class Menu {
         menuItems.add(new MenuItem(displayName, action));
     }
     public void addSubMenu(Menu subMenu){
-        menuItems.add(new MenuItem(subMenu.menuTitle, subMenu::display));
+        menuItems.add(new MenuItem(subMenu.menuTitle, subMenu::returnList));
+    }
+    public boolean returnList(){
+        return true;
     }
     public void display(){
         Scanner scanner = new Scanner(System.in);
@@ -43,7 +46,7 @@ public class Menu {
             }
         }
     }
-    public String getList(){
+    public String getItemsListDisplay(){
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i< menuItems.size(); i++){
             if(i != 0) {
@@ -52,5 +55,12 @@ public class Menu {
             sb.append(menuItems.get(i).displayName);
         }
         return sb.toString();
+    }
+    public List<String> getItemsList(){
+        List<String> itemList = new ArrayList<>();
+        for (MenuItem menuItem : menuItems) {
+            itemList.add(menuItem.displayName);
+        }
+        return itemList;
     }
 }
