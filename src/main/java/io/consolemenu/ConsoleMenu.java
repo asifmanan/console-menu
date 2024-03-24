@@ -1,10 +1,8 @@
 package io.consolemenu;
 
 import org.jline.reader.LineReader;
-import org.jline.reader.LineReaderBuilder;
-import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
+import org.jline.utils.InfoCmp;
 
 import java.io.IOException;
 
@@ -28,25 +26,34 @@ public class ConsoleMenu {
 //            menuItemsList.add(":b");
 //        }
         try {
-            terminal = TerminalBuilder.builder().build();
+            terminal = TerminalManager.getTerminal();
+            lineReader = TerminalManager.getLineReader();
 
+//            TerminalManager.updateCompleter(menu.getItemsList());
+//            lineReader = TerminalManager.getLineReader();
 
-            StringsCompleter completer = new StringsCompleter(menu.getItemsList());
-
-            lineReader = LineReaderBuilder.builder().terminal(terminal).completer(completer).build();
+//            lineReader = LineReaderBuilder.builder().terminal(terminal).completer(completer).build();
 
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-        if(terminal == null || lineReader == null) {
-            return;
-        }
+//        if(terminal == null || lineReader == null) {
+//            return;
+//        }
 
         String line;
         terminal.flush();
 
         while(!menu.getBreakLoopFlag()){
+            terminal.puts(InfoCmp.Capability.clear_screen);
+            System.out.println("Menu Title: "+ menu.getMenuTitle());
+            try {
+                TerminalManager.updateCompleter(menu.getItemsList());
+                lineReader = TerminalManager.getLineReader();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             line = lineReader.readLine("main>>");
             if(":q".equals(line)){
                 break;
@@ -57,13 +64,8 @@ public class ConsoleMenu {
                 }
             }
             terminal.flush();
-        }
-        try{
-            terminal.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
+        }
     }
 }
 

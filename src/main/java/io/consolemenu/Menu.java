@@ -1,5 +1,6 @@
 package io.consolemenu;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -22,6 +23,12 @@ public class Menu {
             this.addMenuItem(":b", () -> this.breakLoopFlag=true);
         }
     }
+    public void resetBreakLoopFlag(){
+        this.breakLoopFlag = false;
+    }
+    public String getMenuTitle(){
+        return this.menuTitle;
+    }
     public void addMenuItem(String displayName, Runnable action) {
         menuItems.add(new MenuItem(displayName, action));
     }
@@ -32,6 +39,17 @@ public class Menu {
         return () -> {
             ConsoleMenu sub = new ConsoleMenu(subMenu);
             sub.initialize();
+            subMenu.resetBreakLoopFlag();
+        };
+    }
+    public Runnable quitApplication(){
+        return () -> {
+            try{
+                TerminalManager.getTerminal().close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.exit(0);
         };
     }
     public List<MenuItem> getMenuItems(){
