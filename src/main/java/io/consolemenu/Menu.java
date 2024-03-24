@@ -5,33 +5,56 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Menu {
-    String menuTitle;
-    List<MenuItem> menuItems = new ArrayList<>();
-    Menu parentMenu;
+    private String menuTitle;
+    private List<MenuItem> menuItems = new ArrayList<>();
+    private Menu parentMenu;
+    private boolean breakLoopFlag = false;
     public Menu(){
     }
     public Menu(String menuTitle){
         this(menuTitle, null);
+        this.addMenuItem(":q", ()->System.exit(0));
     }
     public Menu(String menuTitle, Menu parentMenu){
         this.menuTitle = menuTitle;
         this.parentMenu = parentMenu;
+        if (this.hasParentMenu()){
+            this.addMenuItem(":b", () -> this.breakLoopFlag=true);
+        }
     }
     public void addMenuItem(String displayName, Runnable action) {
         menuItems.add(new MenuItem(displayName, action));
     }
     public void addSubMenu(Menu subMenu){
-        menuItems.add(new MenuItem(subMenu.menuTitle, subMenu::returnList));
+        menuItems.add(new MenuItem(subMenu.menuTitle, subMenuAction(subMenu)));
+    }
+    public Runnable subMenuAction(Menu subMenu){
+        return () -> {
+            ConsoleMenu sub = new ConsoleMenu(subMenu);
+            sub.initialize();
+        };
+    }
+    public List<MenuItem> getMenuItems(){
+        return this.menuItems;
     }
     public boolean returnList(){
         return true;
+    }
+    public boolean hasParentMenu(){
+        if(this.parentMenu != null) {
+            return true;
+        }
+        return false;
+    }
+    public boolean getBreakLoopFlag(){
+        return this.breakLoopFlag;
     }
     public void display(){
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("\n" + menuTitle);
             for (int i = 0; i < menuItems.size(); i++) {
-                System.out.println((i + 1) + ". " + menuItems.get(i).displayName);
+                System.out.println((i + 1) + ". " + menuItems.get(i).getDisplayName());
             }
 
             int choice = scanner.nextInt();
@@ -52,15 +75,18 @@ public class Menu {
             if(i != 0) {
                 sb.append("    |    ");
             }
-            sb.append(menuItems.get(i).displayName);
+            sb.append(menuItems.get(i).getDisplayName());
         }
         return sb.toString();
     }
     public List<String> getItemsList(){
         List<String> itemList = new ArrayList<>();
         for (MenuItem menuItem : menuItems) {
-            itemList.add(menuItem.displayName);
+            itemList.add(menuItem.getDisplayName());
         }
         return itemList;
+    }
+    public MenuItem getMenuItem(int index){
+        return this.menuItems.get(index);
     }
 }

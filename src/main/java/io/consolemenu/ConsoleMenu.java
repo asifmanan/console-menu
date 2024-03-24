@@ -9,7 +9,7 @@ import org.jline.terminal.TerminalBuilder;
 import java.io.IOException;
 
 public class ConsoleMenu {
-    private final Menu menu;
+    private Menu menu;
 
 
     public ConsoleMenu(){
@@ -22,8 +22,14 @@ public class ConsoleMenu {
     public void initialize(){
         Terminal terminal = null;
         LineReader lineReader = null;
+//        List<String> menuItemsList = new ArrayList<>(menu.getItemsList());
+//        menuItemsList.add(":q");
+//        if(menu.hasParentMenu()){
+//            menuItemsList.add(":b");
+//        }
         try {
             terminal = TerminalBuilder.builder().build();
+
 
             StringsCompleter completer = new StringsCompleter(menu.getItemsList());
 
@@ -40,10 +46,15 @@ public class ConsoleMenu {
         String line;
         terminal.flush();
 
-        while(true){
+        while(!menu.getBreakLoopFlag()){
             line = lineReader.readLine("main>>");
             if(":q".equals(line)){
                 break;
+            }
+            for(int i = 0; i < menu.getMenuItems().size(); i++){
+                if(line.trim().equals(menu.getMenuItem(i).getDisplayName().trim())){
+                    menu.getMenuItem(i).execute();
+                }
             }
             terminal.flush();
         }
