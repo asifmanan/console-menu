@@ -19,6 +19,9 @@ public class MenuItem {
     public String getDisplayName(){
         return this.displayName;
     }
+    public Runnable getAction(){
+        return this.action;
+    }
     public String getHint(){
         return this.hint;
     }
