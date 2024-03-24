@@ -2,6 +2,7 @@ package io.consolemenu;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -14,23 +15,30 @@ public class Menu {
     }
     public Menu(String menuTitle){
         this(menuTitle, null);
-        this.addMenuItem(":q", ()->System.exit(0));
+        this.addMenuItem(":q", this::quitApplication,"Quit");
     }
     public Menu(String menuTitle, Menu parentMenu){
         this.menuTitle = menuTitle;
         this.parentMenu = parentMenu;
         if (this.hasParentMenu()){
-            this.addMenuItem(":b", () -> this.breakLoopFlag=true);
+            this.addMenuItem(":q", this::quitApplication, "Quit");
+            this.addMenuItem(":b", this::setBreakLoopFlag, "Back");
         }
-    }
-    public void resetBreakLoopFlag(){
-        this.breakLoopFlag = false;
     }
     public String getMenuTitle(){
         return this.menuTitle;
     }
+    public MenuItem getMenuItem(int index){
+        return this.menuItems.get(index);
+    }
+    public List<MenuItem> getMenuItems(){
+        return this.menuItems;
+    }
     public void addMenuItem(String displayName, Runnable action) {
         menuItems.add(new MenuItem(displayName, action));
+    }
+    public void addMenuItem(String displayName, Runnable action, String hint) {
+        menuItems.add(new MenuItem(displayName, action, hint));
     }
     public void addSubMenu(Menu subMenu){
         menuItems.add(new MenuItem(subMenu.menuTitle, subMenuAction(subMenu)));
@@ -42,21 +50,13 @@ public class Menu {
             subMenu.resetBreakLoopFlag();
         };
     }
-    public Runnable quitApplication(){
-        return () -> {
-            try{
-                TerminalManager.getTerminal().close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            System.exit(0);
-        };
-    }
-    public List<MenuItem> getMenuItems(){
-        return this.menuItems;
-    }
-    public boolean returnList(){
-        return true;
+    public void quitApplication(){
+        try{
+            TerminalManager.getTerminal().close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
     }
     public boolean hasParentMenu(){
         if(this.parentMenu != null) {
@@ -64,10 +64,46 @@ public class Menu {
         }
         return false;
     }
+    public void setBreakLoopFlag(){
+        this.breakLoopFlag = true;
+    }
+    public void resetBreakLoopFlag(){
+        this.breakLoopFlag = false;
+    }
     public boolean getBreakLoopFlag(){
         return this.breakLoopFlag;
     }
-    public void display(){
+    public List<String> getItemsList(){
+        List<String> itemList = new ArrayList<>();
+        for (MenuItem menuItem : menuItems) {
+            itemList.add(menuItem.getDisplayName());
+        }
+        return itemList;
+    }
+    public String displayMenuOptions(){
+        menuItems.sort(Comparator.comparing(MenuItem::getDisplayName));
+        StringBuilder sb = new StringBuilder();
+
+        String itemName;
+
+        for(int i = 0; i< menuItems.size(); i++){
+            if(i != 0) {
+                sb.append("      ");
+            }
+            itemName = menuItems.get(i).getDisplayName();
+            if (menuItems.get(i).getHint() != null) {
+                itemName = itemName + " ("+ menuItems.get(i).getHint()+")";
+            }
+            sb.append(itemName);
+        }
+
+        sb.append("\n\n(Press tab for autocomplete suggestions)\n");
+        return sb.toString();
+    }
+
+
+//  Optional fallback function, but not setup yet.
+    public void simpleDisplayMenuOptions(){
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("\n" + menuTitle);
@@ -86,25 +122,5 @@ public class Menu {
                 break; // Return to the parent menu
             }
         }
-    }
-    public String getItemsListDisplay(){
-        StringBuilder sb = new StringBuilder();
-        for(int i = 0; i< menuItems.size(); i++){
-            if(i != 0) {
-                sb.append("    |    ");
-            }
-            sb.append(menuItems.get(i).getDisplayName());
-        }
-        return sb.toString();
-    }
-    public List<String> getItemsList(){
-        List<String> itemList = new ArrayList<>();
-        for (MenuItem menuItem : menuItems) {
-            itemList.add(menuItem.getDisplayName());
-        }
-        return itemList;
-    }
-    public MenuItem getMenuItem(int index){
-        return this.menuItems.get(index);
     }
 }

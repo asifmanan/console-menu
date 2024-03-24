@@ -20,51 +20,41 @@ public class ConsoleMenu {
     public void initialize(){
         Terminal terminal = null;
         LineReader lineReader = null;
-//        List<String> menuItemsList = new ArrayList<>(menu.getItemsList());
-//        menuItemsList.add(":q");
-//        if(menu.hasParentMenu()){
-//            menuItemsList.add(":b");
-//        }
+
         try {
             terminal = TerminalManager.getTerminal();
             lineReader = TerminalManager.getLineReader();
 
-//            TerminalManager.updateCompleter(menu.getItemsList());
-//            lineReader = TerminalManager.getLineReader();
-
-//            lineReader = LineReaderBuilder.builder().terminal(terminal).completer(completer).build();
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-//        if(terminal == null || lineReader == null) {
-//            return;
-//        }
 
         String line;
         terminal.flush();
 
+        terminal.puts(InfoCmp.Capability.clear_screen);
+
         while(!menu.getBreakLoopFlag()){
-            terminal.puts(InfoCmp.Capability.clear_screen);
-            System.out.println("Menu Title: "+ menu.getMenuTitle());
+
+            System.out.println(menu.displayMenuOptions());
+
             try {
                 TerminalManager.updateCompleter(menu.getItemsList());
                 lineReader = TerminalManager.getLineReader();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            line = lineReader.readLine("main>>");
-            if(":q".equals(line)){
-                break;
-            }
+
+            line = lineReader.readLine(menu.getMenuTitle()+">>");
+
             for(int i = 0; i < menu.getMenuItems().size(); i++){
                 if(line.trim().equals(menu.getMenuItem(i).getDisplayName().trim())){
+                    terminal.puts(InfoCmp.Capability.clear_screen);
                     menu.getMenuItem(i).execute();
                 }
             }
-            terminal.flush();
 
+            terminal.flush();
         }
     }
 }
